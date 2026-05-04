@@ -1,18 +1,24 @@
 <% layout("/layouts/boilerplate") %>
+<% const imageUrl = typeof listing.image === "string"
+  ? listing.image
+  : (listing.image && listing.image.url)
+    ? listing.image.url
+    : "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"; %>
 <div class="row">
   <div class="col-8 offset-2">
 
   
       <br><br>
-      <h3>Listing Details</h3>
-      <div class="card" col-6 offset-3>
+      <h3><%= listing.title %></h3>
+      <div class="card listing-card" col-6 offset-3 >
         <div class="card">
-    <img src="<%= listing.image.url %>" class="card-img-top show-img" alt="listing_image">
+    <img src="<%= imageUrl %>" class="card-img-top show-img" alt="listing_image">
     <div class="card-body">
       <p class="card-text">
-      <b><%= listing.title %></b>
+      
         </p>
         <p class="des">
+          <i><%= listing.owner ? `Hosted by ${listing.owner.username}` : "Hosted by Unknown" %><br>  </i>
        <%= listing.description %><br>
         &#8377;<%= listing.price.toLocaleString("en-IN") %> / Night<br>
         <%= listing.location %><br>
@@ -20,16 +26,103 @@
    </div>
   
   </div>
+     
         <div class="show-actions">
           <a href="/listings/<%= listing._id %>/edit" class="btn-show btn-edit">Edit</a>
 
-          <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
-          <button class="btn-show btn-delete">Delete</button>
+          <form method="POST" action="/listings/<%= listing._id %>">
+          <input type="hidden" name="_method" value="DELETE">
+          <button type="submit" class="btn-show btn-delete">Delete</button>
           </form>
         </div>
+       
     
       </div>
     </div>
     
   </div>
+  <div class="col-8 offset-2">
+    <hr/>
+    <h4>Leave a Review</h4>
+    <form  action="/listings/<%=listing.id%>/reviews" method="POST"
+      novalidate
+      class="needs-validation"
+      >
+      <div class="mb-3 mt-3">
+        <label for="rating" class="form-label">Rating</label>
+        <input type="range" class="form-range" min="1" max="5" id="rating" name="review[rating]"/>
+        
+         
+      </div>
+      <div class="mb-3 mt-3" >
+        <label for="comment" class="form-label">Comments</label>
+        <textarea
+        name="review[comment]"
+        id="comment"
+        cols="30"
+        rows="5"
+        class="form-control"
+        required
+        ></textarea>
+        <div class="invalid-feedback">Please add some comments for review.</div>
+      </div>
+      <button type="submit" class="btn btn-outline-dark">Submit Review</button>
+    </form>
+    <hr />
+    <b>All Reviews</b>
+    <div class="row mt-3">
+    <% for (let review of listing.reviews) { %>
+      <div class="card col-5 ms-3 mb-3 review-card">
+        <div class="card-body review-card-body">
+          <h5 class="card-title"><%= review.author ? review.author.username : "Anonymous" %></h5>
+          <p class="card-text"><%= review.comment %></p>
+          <p class="card-text">Rating: <%= review.rating %> / 5</p>
+          <div class="review-actions">
+            <button
+              class="btn btn-sm btn-review-edit"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#editReview-<%= review._id %>"
+              aria-expanded="false"
+              aria-controls="editReview-<%= review._id %>">
+              Edit
+            </button>
+            <form
+              class="mb-0"
+              method="POST"
+              action="/listings/<%= listing._id %>/reviews/<%= review._id %>/delete">
+              <button type="submit" class="btn btn-sm btn-dark">Delete</button>
+            </form>
+          </div>
+          <div class="collapse mt-3" id="editReview-<%= review._id %>">
+            <div class="review-edit-card">
+              <form
+                method="POST"
+                action="/listings/<%= listing._id %>/reviews/<%= review._id %>/update">
+                <label for="comment-<%= review._id %>" class="form-label">Update Comment</label>
+                <textarea
+                  id="comment-<%= review._id %>"
+                  name="review[comment]"
+                  class="form-control mb-2"
+                  rows="3"
+                  required
+                ><%= review.comment %></textarea>
+                <label for="rating-<%= review._id %>" class="form-label">Update Rating</label>
+                <input
+                  id="rating-<%= review._id %>"
+                  type="range"
+                  class="form-range mb-3"
+                  min="1"
+                  max="5"
+                  name="review[rating]"
+                  value="<%= review.rating %>">
+                <button type="submit" class="btn btn-sm btn-outline-dark">Update Review</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    </div>
+    </div>
 </div>

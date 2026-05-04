@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Review = require("./reviews.js");
+const { DEFAULT_LISTING_IMAGE, normalizeImageUrl } = require("../utils/image.js");
 
 const ListingSchema = new Schema({
     title:{
@@ -14,16 +16,30 @@ const ListingSchema = new Schema({
   },
     url: {
       type: String,
-      default: "https://unsplash.com/photos/full-moon-glowing-behind-dark-clouds-at-night-gRT7o73xua0",
+      default: DEFAULT_LISTING_IMAGE,
     set: (v) =>
-      v === ""
-        ? "https://unsplash.com/photos/full-moon-glowing-behind-dark-clouds-at-night-gRT7o73xua0"
-        : v
-  }
-},
+      normalizeImageUrl(v)
+   }
+ },
     price: Number,
     location: String,
     country: String,
+    reviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }
+});
+ListingSchema.post("findOneAndDelete", async(listing)=>{
+  if(listing){
+    await Review.deleteMany({ _id : {$in: listing.reviews}  });
+  }
+
 });
 
 const Listing = mongoose.model("Listing", ListingSchema);

@@ -1,35 +1,10 @@
-
-<!--<!DOCTYPE html>
-  <body>
-      <h3>Edit Listing </h3>
-      <form method="POST" action="/listings/<%= listing._id %>?_method=PUT">
-        <div class="mb-3">
-          <label for="title" class="form-label">Title</label>
-          <input type="text" name="listing[title]" value="<%= listing.title %>"  class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-          <label for="description" class="form-label">Description</label>
-          <textarea name="listing[description]" class="form-control" required><%= listing.description %></textarea>
-        </div>
-
-        <div class="mb-3">
-          <label for="price" class="form-label">Price</label>
-          <input type="number" name="listing[price]" value="<%= listing.price %>" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-          <label for="image" class="form-label">Image URL</label>
-          <input type="text" name ="listing[image][url]" value="<%= listing.image.url %>" class="form-control">
-        </div>
-        
-        <button type="submit">Edit</button>
-      </form>
-    
-     </body>
-</html>
--->
 <% layout("/layouts/boilerplate") %>
+<% const imageUrl = typeof listing.image === "string"
+  ? listing.image
+  : (listing.image && listing.image.url)
+    ? listing.image.url
+    : ""; %>
+<% const imageFilename = listing.image && listing.image.filename ? listing.image.filename : "listingimage"; %>
 
 <div class="row">
   <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3">
@@ -37,8 +12,6 @@
     <h3 class="mb-4">Edit Listing</h3>
 
     <form method="POST" action="/listings/<%= listing._id %>?_method=PUT">
-
-      <!-- Title -->
       <div class="mb-3">
         <label class="form-label">Title</label>
         <input
@@ -50,7 +23,6 @@
         >
       </div>
 
-      <!-- Description -->
       <div class="mb-3">
         <label class="form-label">Description</label>
         <textarea
@@ -60,55 +32,47 @@
         ><%= listing.description %></textarea>
       </div>
 
-      <!-- Price -->
       <div class="row">
+        <div class="mb-3 col-4">
+          <label class="form-label">Price</label>
+          <input
+            type="number"
+            name="listing[price]"
+            value="<%= listing.price %>"
+            class="form-control"
+            placeholder="1200"
+            required
+          >
+        </div>
 
-  <!-- Price -->
-  <div class="col-lg-6 mb-3">
-    <label class="form-label">Price</label>
-    <input
-      type="number"
-      name="listing[price]"
-      value="<%= listing.price %>"
-      placeholder="Enter price per night"
-      class="form-control"
-      required
-    >
-  </div>
+        <div class="mb-3 col-8">
+          <label class="form-label">Country</label>
+          <input
+            type="text"
+            name="listing[country]"
+            value="<%= listing.country %>"
+            class="form-control"
+            placeholder="India"
+          >
+        </div>
+      </div>
 
-  <!-- Country -->
-  <div class="col-lg-6 mb-3">
-    <label class="form-label">Country</label>
-    <input
-      type="text"
-      name="listing[country]"
-      value="<%= listing.country %>"
-      placeholder="Enter country"
-      class="form-control"
-    >
-  </div>
-
-</div>
-
-
-      <!-- Image URL -->
       <div class="mb-3">
         <label class="form-label">Image URL</label>
         <input
           type="text"
           name="listing[image][url]"
-          value="<%= listing.image.url %>"
+          value="<%= imageUrl %>"
           class="form-control"
+          placeholder="Paste image link"
         >
-        <!-- keep filename intact -->
         <input
           type="hidden"
           name="listing[image][filename]"
-          value="<%= listing.image.filename %>"
+          value="<%= imageFilename %>"
         >
       </div>
 
-      <!-- Location -->
       <div class="mb-3">
         <label class="form-label">Location</label>
         <input
@@ -116,15 +80,12 @@
           name="listing[location]"
           value="<%= listing.location %>"
           class="form-control"
+          placeholder="BodhGaya, Bihar"
         >
       </div>
 
-      <!-- Country -->
-      
-
-      <button class=" btn-primary">Update Listing</button>
-
+      <button class="btn-primary">Update Listing</button>
+      <br><br>
     </form>
-
   </div>
 </div>

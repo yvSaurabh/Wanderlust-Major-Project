@@ -1,0 +1,13 @@
+(node:13852) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+C:\Users\kpras\OneDrive\Desktop\Project\SAURABH\Wanderlust\middleware.js:14
+    if(req.session.redirectUrl){
+                   ^
+
+TypeError: Cannot read properties of undefined (reading 'redirectUrl')
+    at module.exports.saveRedirectUrl (C:\Users\kpras\OneDrive\Desktop\Project\SAURABH\Wanderlust\middleware.js:14:20)
+    at strategy.error (C:\Users\kpras\OneDrive\Desktop\Project\SAURABH\Wanderlust\node_modules\passport\lib\middleware\authenticate.js:370:18)
+    at verified (C:\Users\kpras\OneDrive\Desktop\Project\SAURABH\Wanderlust\node_modules\passport-local\lib\strategy.js:81:28)
+    at C:\Users\kpras\OneDrive\Desktop\Project\SAURABH\Wanderlust\node_modules\passport-local-mongoose\dist\index.js:165:92
+
+Node.js v22.19.0
