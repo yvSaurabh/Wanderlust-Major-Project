@@ -7,12 +7,11 @@ const Listing = require("../models/listing.js");
 const { normalizeListingImage } = require("../utils/image.js");
 const {isLoggedIn, isOwner, validateListing} = require("../middleware.js");
 
+const listingController = require("../controllers/listings.js");
+
 
 // index route to show all listings
-router.get("/", wrapAsync(async(req,res)=>{
-   const allListings = await Listing.find({});
-   res.render("listings/index",{allListings});
-}));
+router.get("/", wrapAsync(listingController.index));
 
 // new route to show form to create new listing
 router.get("/new",isLoggedIn,wrapAsync(async(req,res)=>{
