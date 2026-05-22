@@ -30,8 +30,7 @@
         <div class="show-actions">
           <a href="/listings/<%= listing._id %>/edit" class="btn-show btn-edit">Edit</a>
 
-          <form method="POST" action="/listings/<%= listing._id %>">
-          <input type="hidden" name="_method" value="DELETE">
+          <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
           <button type="submit" class="btn-show btn-delete">Delete</button>
           </form>
         </div>
