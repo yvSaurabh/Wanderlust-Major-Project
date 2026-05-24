@@ -5,6 +5,10 @@ const directImageUrlSchema = Joi.string()
     .custom((value, helpers) => {
         if (!value) return value;
 
+        if (value.startsWith("/uploads/")) {
+            return value;
+        }
+
         try {
             const parsedUrl = new URL(value);
 

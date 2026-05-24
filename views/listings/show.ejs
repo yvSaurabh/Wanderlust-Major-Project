@@ -4,6 +4,7 @@
   : (listing.image && listing.image.url)
     ? listing.image.url
     : "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"; %>
+<% const isOwner = currUser && listing.owner && listing.owner._id.equals(currUser._id); %>
 <div class="row">
   <div class="col-8 offset-2">
 
@@ -27,13 +28,15 @@
   
   </div>
      
-        <div class="show-actions">
-          <a href="/listings/<%= listing._id %>/edit" class="btn-show btn-edit">Edit</a>
+        <% if (isOwner) { %>
+          <div class="show-actions">
+            <a href="/listings/<%= listing._id %>/edit" class="btn-show btn-edit">Edit</a>
 
-          <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
-          <button type="submit" class="btn-show btn-delete">Delete</button>
-          </form>
-        </div>
+            <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+            <button type="submit" class="btn-show btn-delete">Delete</button>
+            </form>
+          </div>
+        <% } %>
        
     
       </div>
@@ -42,16 +45,27 @@
   </div>
   <div class="col-8 offset-2">
     <hr/>
-    <h4>Leave a Review</h4>
-    <form  action="/listings/<%=listing.id%>/reviews" method="POST"
+    <% if (currUser) { %>
+      <h4>Leave a Review</h4>
+      <form  action="/listings/<%= listing._id %>/reviews" method="POST"
       novalidate
       class="needs-validation"
       >
       <div class="mb-3 mt-3">
-        <label for="rating" class="form-label">Rating</label>
-        <input type="range" class="form-range" min="1" max="5" id="rating" name="review[rating]"/>
-        
-         
+        <label class="form-label">Rating</label>
+        <fieldset class="starability-slot">
+          <input type="radio" id="new-review-rate-1" name="review[rating]" value="1" required />
+          <label for="new-review-rate-1" title="Terrible">1 star</label>
+          <input type="radio" id="new-review-rate-2" name="review[rating]" value="2" />
+          <label for="new-review-rate-2" title="Not good">2 stars</label>
+          <input type="radio" id="new-review-rate-3" name="review[rating]" value="3" />
+          <label for="new-review-rate-3" title="Average">3 stars</label>
+          <input type="radio" id="new-review-rate-4" name="review[rating]" value="4" />
+          <label for="new-review-rate-4" title="Very good">4 stars</label>
+          <input type="radio" id="new-review-rate-5" name="review[rating]" value="5" />
+          <label for="new-review-rate-5" title="Amazing">5 stars</label>
+        </fieldset>
+        <div class="invalid-feedback">Please select a rating.</div>
       </div>
       <div class="mb-3 mt-3" >
         <label for="comment" class="form-label">Comments</label>
@@ -66,7 +80,8 @@
         <div class="invalid-feedback">Please add some comments for review.</div>
       </div>
       <button type="submit" class="btn btn-outline-dark">Submit Review</button>
-    </form>
+      </form>
+    <% } %>
     <hr />
     <b>All Reviews</b>
     <div class="row mt-3">
@@ -75,8 +90,12 @@
         <div class="card-body review-card-body">
           <h5 class="card-title"><%= review.author ? review.author.username : "Anonymous" %></h5>
           <p class="card-text"><%= review.comment %></p>
-          <p class="card-text">Rating: <%= review.rating %> / 5</p>
-          <div class="review-actions">
+          <p class="starability-result" data-rating="<%= review.rating %>">
+            Rated: <%= review.rating %> stars
+          </p>
+          <% const isReviewAuthor = currUser && review.author && review.author._id.equals(currUser._id); %>
+          <% if (isReviewAuthor) { %>
+            <div class="review-actions">
             <button
               class="btn btn-sm btn-review-edit"
               type="button"
@@ -92,8 +111,8 @@
               action="/listings/<%= listing._id %>/reviews/<%= review._id %>/delete">
               <button type="submit" class="btn btn-sm btn-dark">Delete</button>
             </form>
-          </div>
-          <div class="collapse mt-3" id="editReview-<%= review._id %>">
+            </div>
+            <div class="collapse mt-3" id="editReview-<%= review._id %>">
             <div class="review-edit-card">
               <form
                 method="POST"
@@ -106,19 +125,49 @@
                   rows="3"
                   required
                 ><%= review.comment %></textarea>
-                <label for="rating-<%= review._id %>" class="form-label">Update Rating</label>
-                <input
-                  id="rating-<%= review._id %>"
-                  type="range"
-                  class="form-range mb-3"
-                  min="1"
-                  max="5"
-                  name="review[rating]"
-                  value="<%= review.rating %>">
+                <label class="form-label">Update Rating</label>
+                <fieldset class="starability-slot">
+                  <input
+                    type="radio"
+                    id="edit-review-<%= review._id %>-rate-1"
+                    name="review[rating]"
+                    value="1"
+                    <%= review.rating === 1 ? "checked" : "" %> />
+                  <label for="edit-review-<%= review._id %>-rate-1" title="Terrible">1 star</label>
+                  <input
+                    type="radio"
+                    id="edit-review-<%= review._id %>-rate-2"
+                    name="review[rating]"
+                    value="2"
+                    <%= review.rating === 2 ? "checked" : "" %> />
+                  <label for="edit-review-<%= review._id %>-rate-2" title="Not good">2 stars</label>
+                  <input
+                    type="radio"
+                    id="edit-review-<%= review._id %>-rate-3"
+                    name="review[rating]"
+                    value="3"
+                    <%= review.rating === 3 ? "checked" : "" %> />
+                  <label for="edit-review-<%= review._id %>-rate-3" title="Average">3 stars</label>
+                  <input
+                    type="radio"
+                    id="edit-review-<%= review._id %>-rate-4"
+                    name="review[rating]"
+                    value="4"
+                    <%= review.rating === 4 ? "checked" : "" %> />
+                  <label for="edit-review-<%= review._id %>-rate-4" title="Very good">4 stars</label>
+                  <input
+                    type="radio"
+                    id="edit-review-<%= review._id %>-rate-5"
+                    name="review[rating]"
+                    value="5"
+                    <%= review.rating === 5 ? "checked" : "" %> />
+                  <label for="edit-review-<%= review._id %>-rate-5" title="Amazing">5 stars</label>
+                </fieldset>
                 <button type="submit" class="btn btn-sm btn-outline-dark">Update Review</button>
               </form>
             </div>
-          </div>
+            </div>
+          <% } %>
         </div>
       </div>
     <% } %>

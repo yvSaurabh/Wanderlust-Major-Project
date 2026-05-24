@@ -12,7 +12,7 @@ router.route("/signup")
 
 router.route("/login")
      .get(userContrroller.renderLoginForm)
-     .post(saveRedirectUrl, passport.authenticate(".local", {
+     .post(saveRedirectUrl, passport.authenticate("local", {
         failureRedirect: "/login",
         failureFlash: true,
     }), wrapAsync(userContrroller.login));
