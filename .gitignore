@@ -1,0 +1,7 @@
+node_modules/
+.env
+uploads/
+public/uploads/
+tmp-*.log
+*.log
+tall eslint --save-dev
