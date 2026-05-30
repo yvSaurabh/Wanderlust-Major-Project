@@ -11,7 +11,7 @@
     <br><br>
     <h3 class="mb-4">Edit Listing</h3>
 
-    <form method="POST" action="/listings/<%= listing._id %>?_method=PUT">
+    <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" enctype="multipart/form-data">
       <div class="mb-3">
         <label class="form-label">Title</label>
         <input
@@ -57,14 +57,24 @@
         </div>
       </div>
 
+
       <div class="mb-3">
-        <label class="form-label">Image URL</label>
+        Original Listing Image <br/>
+        <img src="<%=listing.image.url %>" alt="Listing Image" class="img-fluid">
+      </div>
+      <div class="mb-3">
+
+        <label class="form-label">Upload New Image</label>
         <input
-          type="text"
+          type="file"
+          name="listing[image]"
+          class="form-control"
+          accept="image/*"
+        >
+        <input
+          type="hidden"
           name="listing[image][url]"
           value="<%= imageUrl %>"
-          class="form-control"
-          placeholder="Paste image link"
         >
         <input
           type="hidden"

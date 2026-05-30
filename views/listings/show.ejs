@@ -85,7 +85,7 @@
     <hr />
     <b>All Reviews</b>
     <div class="row mt-3">
-    <% for (let review of listing.reviews) { %>
+     <% for (let review of listing.reviews) { %>
       <div class="card col-5 ms-3 mb-3 review-card">
         <div class="card-body review-card-body">
           <h5 class="card-title"><%= review.author ? review.author.username : "Anonymous" %></h5>
@@ -172,5 +172,25 @@
       </div>
     <% } %>
     </div>
+    <h3>Where you will be</h3>
+    <div class="row mt-3">
+      <div class="col-12">
+        <div id="map" style="width: 100%; height: 400px;"></div>
+      </div>
+    </div>
+    <script>
+      mapboxgl.accessToken = "<%= process.env.MAP_TOKEN %>";
+      const mapCenter = [77.2090, 28.6139];
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: mapCenter,
+        zoom: 9
+      });
+
+      new mapboxgl.Marker()
+        .setLngLat(mapCenter)
+        .addTo(map);
+    </script>
     </div>
 </div>
