@@ -1,5 +1,22 @@
 const Listing = require("../models/listing");
 const { normalizeListingImage } = require("../utils/image.js");
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+
+const getListingGeometry = async (listing) => {
+    if (!process.env.MAP_TOKEN) {
+        return undefined;
+    }
+
+    const geocodingClient = mbxGeocoding({ accessToken: process.env.MAP_TOKEN });
+    const response = await geocodingClient
+        .forwardGeocode({
+            query: `${listing.location}, ${listing.country}`,
+            limit: 1,
+        })
+        .send();
+
+    return response.body.features[0]?.geometry;
+};
 
 module.exports.index = async (req, res) => {
     const allListings = await Listing.find({});
@@ -32,6 +49,8 @@ module.exports.showListing = async(req, res)=>{
 
 module.exports.createListing = async(req, res)=>{
         req.body.listing.image = normalizeListingImage(req.body.listing.image);
+        req.body.listing.geometry = await getListingGeometry(req.body.listing);
+
         const newListing = new Listing(req.body.listing);
         newListing.owner = req.user._id;
         await newListing.save();
@@ -46,6 +65,12 @@ module.exports.createListing = async(req, res)=>{
 module.exports.updateListing = async (req, res) => {
     let {id} = req.params;
     req.body.listing.image = normalizeListingImage(req.body.listing.image);
+
+    const geometry = await getListingGeometry(req.body.listing);
+    if (geometry) {
+        req.body.listing.geometry = geometry;
+    }
+
     await Listing.findByIdAndUpdate(id, {...req.body.listing});
     req.flash("success", "Listing updated successfully!");
     res.redirect(`/listings/${id}`);

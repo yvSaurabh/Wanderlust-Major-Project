@@ -179,18 +179,9 @@
       </div>
     </div>
     <script>
-      mapboxgl.accessToken = "<%= process.env.MAP_TOKEN %>";
-      const mapCenter = [77.2090, 28.6139];
-      const map = new mapboxgl.Map({
-        container: "map",
-        style: "mapbox://styles/mapbox/streets-v11",
-        center: mapCenter,
-        zoom: 9
-      });
-
-      new mapboxgl.Marker()
-        .setLngLat(mapCenter)
-        .addTo(map);
+      window.mapToken = "<%= process.env.MAP_TOKEN %>";
+      window.mapCenter = <%- JSON.stringify(listing.geometry && listing.geometry.coordinates ? listing.geometry.coordinates : [77.2090, 28.6139]) %>;
     </script>
+    <script src="/js/map.js"></script>
     </div>
 </div>
