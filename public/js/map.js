@@ -1,4 +1,4 @@
-if (typeof mapboxgl !== "undefined" && document.getElementById("map")) {
+if (typeof mapboxgl !== "undefined" && document.getElementById("map") && window.mapToken) {
   mapboxgl.accessToken = window.mapToken;
 
   const mapCenter = window.mapCenter || [77.2090, 28.6139];
@@ -12,4 +12,6 @@ if (typeof mapboxgl !== "undefined" && document.getElementById("map")) {
   new mapboxgl.Marker()
     .setLngLat(mapCenter)
     .addTo(map);
+} else if (document.getElementById("map")) {
+  console.error("Mapbox map could not load. Check MAP_TOKEN and Mapbox script setup.");
 }
